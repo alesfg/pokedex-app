@@ -1,44 +1,49 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
 import axios from 'axios';
 
 import { StyleSheet, View, Text, Image, ScrollView } from 'react-native';
 
 
-export default function PokemonList({ pokemonUrl, currentPageUrl }) {
+export default function PokemonList({ pokemon,pokemonIndex }) {
     
-    const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/`
-    const [pokemonId, setPokemonId] = useState([])
+    const url = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/`
+    let urlPoke = 'https://pokeapi.co/api/v2/pokemon/';
     // pokemon solo tiene 20 nombres cada render, pero p(pokemonIndex) sigue sumando, entonces cuando quiero acceder al nombre
     // necesito el index porque las imagenes son por ej 124.png pero ahora tb necesito otro iterador Bien para acceder al resto de datos de Pokeapi
     //https://pokeapi.co/api/v2/pokemon/1 ==https://pokeapi.co/api/v2/pokemon/bulbasaur!!!!!!!!!!
     //creo qye hay q hacer otro axios para el id y para otros datos
-
-    useEffect(() => {
-      pokemonUrl.map(u => {
-        console.log(u)
-        axios.get(u).then(res => {
-          setPokemonId(res.data.id)
-        })
-      })
-
-    }, [currentPageUrl])
-   
-
-    console.log(pokemonId)
+    axios.get(pokemonUrl).then(res => {
+      console.log(res.data)
+    })
     
     return (
       <ScrollView>
-        {pokemonUrl.map(p => (
+        {pokemonIndex.map(p => (
           <View key={p}>
             <Text style={styles.digits}>
-              009
-                
+                #{p.length == 1 ? '00' : ''}
+                  {p.length == 2 ? '0' : ''}
+                {p}
             </Text>
-            <Text style={styles.text}> E </Text>
+            <Text style={styles.text}> {pokemon[p-1]} </Text>
           <View  style={styles.card}>
-            <Text>hola</Text>
-                        
+            <Text>{p}</Text>
+            {/* {console.log("este p:"+p)} */}
+            {/* {console.log("este poke:"+pokemon[p-1])} */}
+            {/* {console.log(urlPoke+p+"/id")} */}
+
+            
+            <Image 
+              source= {{ uri: `${url}${p}.png` }}
+              style= {styles.image}
+              />
+              <Image 
+              source= {{ uri: `${url}back/${p}.png` }}
+              style= {styles.image}
+              />
+              
+              
           </View>
           </View>
         ))}  
