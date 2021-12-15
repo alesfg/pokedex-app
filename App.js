@@ -7,7 +7,6 @@ import PokemonList from './components/PokemonList';
 export default function App() {
 
   const[allPokemons, setAllPokemons] = useState([])
-
   const [loadMore, setLoadMore] = useState('https://pokeapi.co/api/v2/pokemon?limit=21')
 
  const getAllPokemons = async () => {
@@ -33,18 +32,18 @@ useEffect(() => {
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <Text style={styles.title}>Pokedex Alex</Text>
-        <View style={styles.container}>
+        <View style={styles.container2}>
         <View style={styles.child}>
-        {allPokemons.map( (pokemonStats, index) => 
-            <PokemonList
-              key={index}
-              id={pokemonStats.id}
-              image={pokemonStats.sprites.front_default}
-              name={pokemonStats.name}
-              type={pokemonStats.types[0].type.name}
-              types={pokemonStats.types}
-            />)}
-        </View>
+          {allPokemons.map( (pokemonStats, index) => 
+              <PokemonList
+                key={index}
+                id={pokemonStats.id}
+                image={pokemonStats.sprites.front_default}
+                name={pokemonStats.name}
+                type={pokemonStats.types[0].type.name}
+                types={pokemonStats.types}
+              />)}
+          </View>
         </View>
         <Button
           className="load-more"
@@ -55,20 +54,30 @@ useEffect(() => {
   );
 }
 
+
+
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#444444',
     paddingTop:30,
     width: '100%',
-    flexDirection: 'row', 
-    flexWrap: 'wrap',
-    // alignItems: 'center',
+    flexDirection: 'row',
     justifyContent: 'center',
   },
+  container2: {
+    backgroundColor: '#445554',
+    paddingTop:30,
+    flexDirection: 'row', 
+    // flexWrap: 'wrap',
+    // alignItems: 'center',
+    // justifyContent: 'space-evenly',
+  },
   child: {
-    width: '48%', 
-    margin: '1%', 
-    // aspectRatio: 1,
+    margin: '1%',
+    flex: 0.9,
+    flexDirection: 'row', 
+    flexWrap: 'wrap',
+    justifyContent:'space-evenly'
   },
   title: {
     backgroundColor: '#222333',
