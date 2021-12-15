@@ -1,64 +1,56 @@
 import React, {useState, useEffect} from 'react';
-import { SafeAreaView, StyleSheet, Text } from 'react-native';
-
-import axios from 'axios'
-
+import { Button, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import PokemonList from './components/PokemonList';
-import Pagination from './components/Pagination';
 
 
 export default function App() {
 
-  // const [pokemon, setPokemon] = useState([]);
+  const[allPokemons, setAllPokemons] = useState([])
 
-  const url= "https://pokeapi.co/api/v2/pokemon/";
-  const [currentPageUrl, setCurrentPageUrl] = useState(url);
-  const [nextPageUrl, setNextPageUrl] = useState();
-  const [prevPageUrl, setPrevPageUrl] = useState();
-  const [loading, setLoading] = useState(true);
+  const [loadMore, setLoadMore] = useState('https://pokeapi.co/api/v2/pokemon?limit=21')
 
-  const [pokemonUrl, setPokemonUrl] = useState([])
-  
+ const getAllPokemons = async () => {
+   const res = await fetch(loadMore)
+   const data = await res.json()
 
-  useEffect(() => {
-    setLoading(true)
-    let cancel
-    axios.get(currentPageUrl, {
-      cancelToken: new axios.CancelToken(c => cancel = c)
-    }).then(res => {
-      setLoading(false)
-      setNextPageUrl(res.data.next)
-      setPrevPageUrl(res.data.previous)
-      
+   setLoadMore(data.next)
 
-      setPokemonUrl(res.data.results.map(p=>p.url))
-    })
-    return () => cancel()
-  }, [currentPageUrl])
+   function createPokemonObject(results)  {
+     results.forEach( async pokemon => {
+       const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.name}`)
+       const data =  await res.json()
+       setAllPokemons( currentList => [...currentList, data].sort((a, b) => a.id - b.id))
+     })
+   }
+   createPokemonObject(data.results)
+ }
 
-
-
-  function gotoNextPage() {
-    setCurrentPageUrl(nextPageUrl)
-  }
-  function gotoPrevPage() {
-    setCurrentPageUrl(prevPageUrl)
-  }
-
-  if(loading) return (
-    <SafeAreaView styles={styles.loading}>
-      <Text style={styles.loading}> Cargando Pokédex🚗🛸 </Text>
-    </SafeAreaView>
-  ) 
+useEffect(() => {
+ getAllPokemons()
+}, [])
   return (
     <SafeAreaView style={styles.container}>
-        <PokemonList pokemonUrl={pokemonUrl} currentPageUrl={currentPageUrl} />
-
-        <Pagination 
-          gotoNextPage={nextPageUrl ? gotoNextPage : null}
-          gotoPrevPage={prevPageUrl ? gotoPrevPage : null}
-          />
+      <ScrollView>
+        <Text style={styles.title}>Pokedex Alex</Text>
+        <View style={styles.container}>
+        <View style={styles.child}>
+        {allPokemons.map( (pokemonStats, index) => 
+            <PokemonList
+              key={index}
+              id={pokemonStats.id}
+              image={pokemonStats.sprites.front_default}
+              name={pokemonStats.name}
+              type={pokemonStats.types[0].type.name}
+              types={pokemonStats.types}
+            />)}
+        </View>
+        </View>
+        <Button
+          className="load-more"
+          onPress={() => getAllPokemons()}
+          title="Ver más" />
+        </ScrollView>
     </SafeAreaView>
   );
 }
@@ -67,13 +59,20 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#444444',
     paddingTop:30,
-    alignItems: 'center',
+    width: '100%',
+    flexDirection: 'row', 
+    flexWrap: 'wrap',
+    // alignItems: 'center',
     justifyContent: 'center',
   },
-  loading: {
-    backgroundColor: '#444333',
-    paddingTop:30,
-    flex:1
+  child: {
+    width: '48%', 
+    margin: '1%', 
+    // aspectRatio: 1,
   },
+  title: {
+    backgroundColor: '#222333',
+    color:'#ffffff'
+  }
   
 });

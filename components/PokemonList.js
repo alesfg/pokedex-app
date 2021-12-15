@@ -1,49 +1,36 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
-import axios from 'axios';
 
 import { StyleSheet, View, Text, Image, ScrollView } from 'react-native';
 
 
-export default function PokemonList({ pokemonUrl, currentPageUrl }) {
-    
-    const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/`
-    const [pokemonId, setPokemonId] = useState([])
-    // pokemon solo tiene 20 nombres cada render, pero p(pokemonIndex) sigue sumando, entonces cuando quiero acceder al nombre
-    // necesito el index porque las imagenes son por ej 124.png pero ahora tb necesito otro iterador Bien para acceder al resto de datos de Pokeapi
-    //https://pokeapi.co/api/v2/pokemon/1 ==https://pokeapi.co/api/v2/pokemon/bulbasaur!!!!!!!!!!
-    //creo qye hay q hacer otro axios para el id y para otros datos
-
-    useEffect(() => {
-      pokemonUrl.map(u => {
-        console.log(u)
-        axios.get(u).then(res => {
-          setPokemonId(res.data.id)
-        })
-      })
-
-    }, [currentPageUrl])
-   
-
-    console.log(pokemonId)
+export default function PokemonList({ id, image, name, type,types }) {
+  const style = type + " thumb-container";
     
     return (
-      <ScrollView>
-        {pokemonUrl.map(p => (
-          <View key={p}>
-            <Text style={styles.digits}>
-              009
-                
+        <View style={styles.card}>
+          <Text>
+            #
+            {id.toString().length==1 ? '00' : ''}
+            {id.toString().length==2 ? '0' : ''}
+            {id}
+          </Text>
+          <Image source={{uri:image}} style={styles.image}/>
+          <View>
+            <Text style={styles.text}>
+              {name}
             </Text>
-            <Text style={styles.text}> E </Text>
-          <View  style={styles.card}>
-            <Text>hola</Text>
-                        
+            <Text style={styles.text}>
+              Tipo:             
+              {types.map((t)=>
+                <Text key={`${id}-${t.type.name}`}>
+                    {t.type.name}
+                </Text>
+              )}
+            </Text>
+            
           </View>
-          </View>
-        ))}  
-        </ScrollView>
-        
+        </View>         
     )
 }
 
@@ -61,7 +48,7 @@ const styles = StyleSheet.create({
       marginLeft: -10,
     },
     image: {
-      width: 100,
+      width: 90,
       height: 100,
       backgroundColor: 'green',
       borderRadius:20
