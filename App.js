@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { Button, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, Dimensions } from 'react-native';
 
 import PokemonList from './components/PokemonList';
 
@@ -30,58 +30,53 @@ useEffect(() => {
 }, [])
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
         <Text style={styles.title}>Pokedex Alex</Text>
-        <View style={styles.container2}>
-        <View style={styles.child}>
-          {allPokemons.map( (pokemonStats, index) => 
-              <PokemonList
-                key={index}
-                id={pokemonStats.id}
-                image={pokemonStats.sprites.front_default}
-                name={pokemonStats.name}
-                type={pokemonStats.types[0].type.name}
-                types={pokemonStats.types}
-              />)}
+      <ScrollView>
+          <View style={styles.list}>
+            {allPokemons.map( (pokemonStats, index) => 
+                <PokemonList
+                  key={index}
+                  id={pokemonStats.id}
+                  image={pokemonStats.sprites.front_default}
+                  name={pokemonStats.name}
+                  type={pokemonStats.types[0].type.name}
+                  types={pokemonStats.types}
+                />)}
           </View>
-        </View>
-        <Button
-          className="load-more"
-          onPress={() => getAllPokemons()}
-          title="Ver más" />
+          <TouchableOpacity onPress={() => getAllPokemons()}>
+            <View style={styles.loadMore}>
+              <Text style={{textAlign:'center', textAlignVertical:'top',fontSize:15, paddingBottom:10}}>Ver más</Text>
+            </View>
+          </TouchableOpacity>
         </ScrollView>
     </SafeAreaView>
   );
 }
 
-
+const {height, width} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#444444',
-    paddingTop:30,
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  container2: {
     backgroundColor: '#445554',
     paddingTop:30,
-    flexDirection: 'row', 
-    // flexWrap: 'wrap',
-    // alignItems: 'center',
-    // justifyContent: 'space-evenly',
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  child: {
-    margin: '1%',
-    flex: 0.9,
-    flexDirection: 'row', 
+  list: {
+    width:'100%',
+    flexDirection: 'row',
     flexWrap: 'wrap',
+    alignItems: 'center',
     justifyContent:'space-evenly'
   },
   title: {
-    backgroundColor: '#222333',
-    color:'#ffffff'
+    color:'#ffffff',
+    padding:10
+  },
+  loadMore: {
+    height:height/15,
+    backgroundColor:'green'
   }
   
 });
