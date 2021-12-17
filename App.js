@@ -9,9 +9,25 @@ export default function App() {
   const[allPokemons, setAllPokemons] = useState([])
   const [loadMore, setLoadMore] = useState('https://pokeapi.co/api/v2/pokemon?limit=21')
 
+  const[allPokemonsDetails, setAllPokemonsDetails] = useState([])
+  const [loadMoreDetails, setLoadMoreDetails] = useState('https://pokeapi.co/api/v2/pokemon-species/?limit=21')
+
  const getAllPokemons = async () => {
    const res = await fetch(loadMore)
    const data = await res.json()
+
+   const resDetails = await fetch(loadMoreDetails)
+   const dataDetails = await resDetails.json()
+   setLoadMoreDetails(dataDetails.next)
+   function createPokemonDetails(results)  {
+    results.forEach( async pokemon => {
+      const res = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemon.name}`)
+      const data =  await res.json()
+      setAllPokemonsDetails( currentList => [...currentList, data].sort((a, b) => a.id - b.id))
+    })
+  }
+  createPokemonDetails(dataDetails.results)
+
 
    setLoadMore(data.next)
 
@@ -28,6 +44,7 @@ export default function App() {
 useEffect(() => {
  getAllPokemons()
 }, [])
+
   return (
     <SafeAreaView style={styles.container}>
         <Text style={styles.title}>Pokedex Alex</Text>
@@ -41,7 +58,10 @@ useEffect(() => {
                   name={pokemonStats.name}
                   type={pokemonStats.types[0].type.name}
                   types={pokemonStats.types}
+                  descrip={allPokemonsDetails[index].color.name}
                 />)}
+
+            
           </View>
           <TouchableOpacity onPress={() => getAllPokemons()}>
             <View style={styles.loadMore}>
