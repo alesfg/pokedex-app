@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, Dimensions } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, Dimensions, Image } from 'react-native';
 
 import PokemonList from './components/PokemonList';
+import pokeball from './assets/pokedex.png'
 
 
 export default function App() {
@@ -9,9 +10,25 @@ export default function App() {
   const[allPokemons, setAllPokemons] = useState([])
   const [loadMore, setLoadMore] = useState('https://pokeapi.co/api/v2/pokemon?limit=21')
 
+  const[allPokemonsDetails, setAllPokemonsDetails] = useState([])
+  const [loadMoreDetails, setLoadMoreDetails] = useState('https://pokeapi.co/api/v2/pokemon-species/?limit=21')
+
  const getAllPokemons = async () => {
    const res = await fetch(loadMore)
    const data = await res.json()
+
+   const resDetails = await fetch(loadMoreDetails)
+   const dataDetails = await resDetails.json()
+   setLoadMoreDetails(dataDetails.next)
+   function createPokemonDetails(results)  {
+    results.forEach( async pokemon => {
+      const res = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemon.name}`)
+      const data =  await res.json()
+      setAllPokemonsDetails( currentList => [...currentList, data].sort((a, b) => a.id - b.id))
+    })
+  }
+  createPokemonDetails(dataDetails.results)
+
 
    setLoadMore(data.next)
 
@@ -28,10 +45,36 @@ export default function App() {
 useEffect(() => {
  getAllPokemons()
 }, [])
+
+/* const renderPokemon = ({ pokemonStats,index }) => (
+  <PokemonList
+  key={index}
+  id={pokemonStats.id}
+  image={pokemonStats.sprites.front_default}
+  name={pokemonStats.name}
+  type={pokemonStats.types[0].type.name}
+  types={pokemonStats.types}
+  color={allPokemonsDetails[index].color.name}
+  />
+); */
+
   return (
     <SafeAreaView style={styles.container}>
+      <View style={styles.titleContainter}>
         <Text style={styles.title}>Pokedex Alex</Text>
+        <Image
+        source={pokeball}
+        style={styles.icon}
+        />
+      </View>
       <ScrollView>
+        {/* data es allpokemons
+          <FlatList
+        data={allPokemons}
+        renderItem={renderPokemon}
+        keyExtractor={pokemonStats => pokemonStats.id}
+      />
+        */}
           <View style={styles.list}>
             {allPokemons.map( (pokemonStats, index) => 
                 <PokemonList
@@ -41,7 +84,11 @@ useEffect(() => {
                   name={pokemonStats.name}
                   type={pokemonStats.types[0].type.name}
                   types={pokemonStats.types}
+                  color={allPokemonsDetails[index].color.name}
+                  description={allPokemonsDetails[index].flavor_text_entries.find(e => e.language.name=="es").flavor_text}
                 />)}
+
+            
           </View>
           <TouchableOpacity onPress={() => getAllPokemons()}>
             <View style={styles.loadMore}>
@@ -57,7 +104,7 @@ const {height, width} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#445554',
+    backgroundColor: '#F7F7F7',
     paddingTop:30,
     width: '100%',
     alignItems: 'center',
@@ -70,13 +117,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent:'space-evenly'
   },
+  icon:{
+    width:50,
+    height:50,
+  },
   title: {
     color:'#ffffff',
-    padding:10
+    padding:10,
+    textAlignVertical:'center'
+  },
+  titleContainter: {
+    backgroundColor:'black',
+    width:width,
+    flexDirection:'row',
+    justifyContent:'space-evenly'
   },
   loadMore: {
-    height:height/15,
+    height:height/12,
     backgroundColor:'green'
   }
   
 });
+
+
