@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, Dimensions, Image } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, Dimensions, Image, FlatList } from 'react-native';
 
 import PokemonList from './components/PokemonList';
 import pokeball from './assets/pokedex.png'
@@ -8,10 +8,12 @@ import pokeball from './assets/pokedex.png'
 export default function App() {
 
   const[allPokemons, setAllPokemons] = useState([])
-  const [loadMore, setLoadMore] = useState('https://pokeapi.co/api/v2/pokemon?limit=21')
+  // const [loadMore, setLoadMore] = useState('https://pokeapi.co/api/v2/pokemon?limit=21')
+  const [loadMore, setLoadMore] = useState('https://pokeapi.co/api/v2/pokemon?limit=121')
 
   const[allPokemonsDetails, setAllPokemonsDetails] = useState([])
-  const [loadMoreDetails, setLoadMoreDetails] = useState('https://pokeapi.co/api/v2/pokemon-species/?limit=21')
+  // const [loadMoreDetails, setLoadMoreDetails] = useState('https://pokeapi.co/api/v2/pokemon-species/?limit=21')
+  const [loadMoreDetails, setLoadMoreDetails] = useState('https://pokeapi.co/api/v2/pokemon-species/?limit=121')
 
  const getAllPokemons = async () => {
    const res = await fetch(loadMore)
@@ -67,35 +69,32 @@ useEffect(() => {
         style={styles.icon}
         />
       </View>
-      <ScrollView>
-        {/* data es allpokemons
-          <FlatList
-        data={allPokemons}
-        renderItem={renderPokemon}
-        keyExtractor={pokemonStats => pokemonStats.id}
-      />
-        */}
+        
           <View style={styles.list}>
-            {allPokemons.map( (pokemonStats, index) => 
-                <PokemonList
-                  key={index}
-                  id={pokemonStats.id}
-                  image={pokemonStats.sprites.front_default}
-                  name={pokemonStats.name}
-                  type={pokemonStats.types[0].type.name}
-                  types={pokemonStats.types}
-                  color={allPokemonsDetails[index].color.name}
-                  description={allPokemonsDetails[index].flavor_text_entries.find(e => e.language.name=="es").flavor_text}
-                />)}
 
-            
+          <FlatList
+            style={{backgroundColor:"lightblue"}}
+            data={allPokemons}
+            keyExtractor={ (item) => item.id  }
+            renderItem={({item, index}) =>
+              <SafeAreaView>
+                <PokemonList 
+                    item = { item }
+                    image={item.sprites.front_default}
+                    color={allPokemonsDetails[index].color.name}
+                    description={allPokemonsDetails[index].flavor_text_entries.find(e => e.language.name=="es").flavor_text}
+                />
+              </SafeAreaView>
+            }
+            ListHeaderComponent={ () => <Text style={{fontWeight:'bold',fontSize:18,margin:10}}>Toca en un pokemon para que la Pokédex te diga su descripción!</Text> }
+          />
+       
           </View>
           <TouchableOpacity onPress={() => getAllPokemons()}>
             <View style={styles.loadMore}>
               <Text style={{textAlign:'center', textAlignVertical:'top',fontSize:15, paddingBottom:10}}>Ver más</Text>
             </View>
           </TouchableOpacity>
-        </ScrollView>
     </SafeAreaView>
   );
 }
