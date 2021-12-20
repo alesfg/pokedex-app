@@ -1,78 +1,105 @@
-import React from 'react'
+import * as React from 'react'
+
+import { StyleSheet, View, Text, Image, Dimensions, TouchableOpacity, Animated, Easing } from 'react-native';
+
+import * as Speech from 'expo-speech';
 
 
-import { StyleSheet, View, Text, Image, Dimensions, TouchableOpacity } from 'react-native';
+export default function PokemonList({ item, color, image, description }) {
+ 
+  const { id, name } = item
+
+  const speak = () => {
+    Speech.speak(description,{
+      rate:1.1,
+      language:'es-ES',
+      pitch:1,
+      // voice:"es-us-x-esc-network"   latino
+      // voice:"es-es-x-eee-local"
+      // voice:"es-es-x-eef-local"  //masculino
+      // voice:"es-es-x-eec-local" //femenino
+      // voice: "es-es-x-eea-local" //femenino robo
+      // voice:"es-es-x-eed-local" //masculino robo
+      // voice:"es-ES-language" //fem
+      voice:"es-es-x-eed-network" //masculino agradable menos robo ,ESTE!
+      // voice:"es-es-x-eec-local"
+    });
+  };
+
+  let translateValue = new Animated.Value(0)
+  const cardTranslate = translateValue.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: [1, 1.1, 1.2]
+  });
 
 
-export default function PokemonList({ id, image, name, type,types }) {
-  const style = type + " thumb-container";
-  
-  // const onPress = () => console.log(id);
-  // const onPress = () => styles.image.height=200
-  let cambia;
     return (
       <TouchableOpacity
-      activeOpacity={0.6}
-      // onPress={onPress}
+      activeOpacity={0.9}
+      onPress={speak}
+
+   
+      onPressIn={() => {
+        
+        translateValue.setValue(0);
+        Animated.timing(translateValue, {
+          toValue: -50,
+          duration: 50,
+          easing: Easing.linear,
+          useNativeDriver: true
+        }).start();
+      }}
+
+        onPressOut={() => {
+          Animated.timing(translateValue, {
+            toValue: 0,
+            duration: 700,
+            easing: Easing.bounce,
+            delay: 6500,
+            useNativeDriver: true
+          }).start()
+        }}
+
       >
-        <View style={styles.card} >
-          <Text style={styles.digits}>
+        <Animated.View style={[styles.card,{borderColor:`${color}`},{borderColor:(`${color}`=='white'||`${color}`=='yellow') ?'orange':`${color}`}, {transform:[{translateY: cardTranslate}]}]} >
+          <Text style={[styles.digits,{color:`${color}`},{color:(`${color}`=='white'||`${color}`=='yellow') ?'orange':`${color}`}]}>
             #
             {id.toString().length==1 ? '00' : ''}
             {id.toString().length==2 ? '0' : ''}
             {id}
           </Text>
-          <View>
+          <Image source={{uri:image}} style={styles.image} resizeMode='cover'/>
+          <View style={[styles.nameContainer, {backgroundColor:`${color}`},{backgroundColor:(`${color}`=='white'||`${color}`=='yellow') ?'orange':`${color}`}]}>
             <Text style={styles.name}> {name} </Text>
-            <Image source={{uri:image}} style={styles.image} resizeMode='contain'/>
-
-              <View style={{flexDirection:'row', justifyContent:'center',marginBottom:20}}>
-              {types.map((t)=>
-                <Text key={`${id}-${t.type.name}`} style={styles.type}>
-                {/* // AAAAAAAAAAAAA */}
-                    {t.type.name}
-                </Text>
-              )}
-              </View>
-            
           </View>
-        </View>
+        </Animated.View>
       </TouchableOpacity>     
     )
 }
 
 const {height, width} = Dimensions.get('window');
-console.log("height: "+height)
-console.log("width: "+width)
 
 const styles = StyleSheet.create({
     card: {
       marginVertical: 10,
       borderRadius: 15,
-      flexDirection: 'row',
-      flexWrap: 'wrap',
       width: width/3.5,
+      height: width/3,
       justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: 'gray',
-      elevation:10
+      backgroundColor: 'white',
+      borderWidth:1.5,
+      elevation:10,
     },  
     image: {
-      width: 100,
-      height: 100,
-      borderRadius:20
+      // backgroundColor:'lightgreen',
+      flex:3.5,
     },
     digits: {
       fontSize:12,
-      color: 'white',
       height:'20%',
-      borderRadius: 6,
-      padding: 2,
-      textAlign:'center',
+      padding: 6,
+      textAlign:'right',
       textAlignVertical:'bottom',
-      textShadowColor: 'black',
-      textShadowOffset: {width: 0, height: 1},
-      textShadowRadius: 10
     },
     name: {
       textTransform: 'capitalize',
@@ -82,48 +109,14 @@ const styles = StyleSheet.create({
       textShadowOffset: {width: -1, height: 1},
       textShadowRadius: 10,
       textAlign:'center',
+      
     },
-    type:{
-      flexDirection:'row',
-      textTransform: 'capitalize',
-      fontSize: 14,
-      textAlign:'center',
-      marginHorizontal:4,
-    }
+    nameContainer: {
+      flex:1,
+      borderBottomLeftRadius:10,
+      borderBottomRightRadius:10,
+      marginBottom:-1
+    },
   });
-
-// no aplicado
-  const colors = StyleSheet.create({
-    rock: {
-      backgroundColor: 'rgb(148, 81, 81)'
-    },
-    ghost: {
-    backgroundColor: 'rgb(247, 247, 247)'
-    },
-    electric: {
-    backgroundColor: 'rgb(255, 255, 161)'
-    },
-    bug: {
-    backgroundColor: '#F6D6A7'
-    },
-    poison: {
-    backgroundColor: '#e0a7f6'
-    },
-    normal: {
-    backgroundColor: '#F4F4F4'
-    },
-    fairy: {
-    backgroundColor: 'rgba(255, 192, 203, 0.863)'
-    },
-    fire: {
-    backgroundColor: '#FBE3DF'
-    },
-    grass: {
-    backgroundColor:'#E2F9E1'
-    },
-    water: {
-    backgroundColor: '#E0F1FD'
-    }
-  })
 
  
