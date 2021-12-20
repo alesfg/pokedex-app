@@ -10,9 +10,14 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@expo-google-fonts/inter": "^0.2.0",
+    "@expo-google-fonts/press-start-2p": "^0.2.0",
     "axios": "^0.24.0",
     "expo": "~43.0.2",
+    "expo-app-loading": "~1.2.1",
+    "expo-font": "~10.0.3",
     "expo-location": "~13.0.4",
+    "expo-speech": "~10.0.3",
     "expo-status-bar": "~1.1.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",

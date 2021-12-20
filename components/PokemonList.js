@@ -3,11 +3,17 @@ import * as React from 'react'
 import { StyleSheet, View, Text, Image, Dimensions, TouchableOpacity, Animated, Easing } from 'react-native';
 
 import * as Speech from 'expo-speech';
+/* import AppLoading from 'expo-app-loading';
+import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p'; */
 
 
-export default function PokemonList({ item, color, image, description }) {
+export default function PokemonList({ item, color, description }) {
  
   const { id, name } = item
+
+ /*  let [fontsLoaded] = useFonts({
+    PressStart2P_400Regular,
+  }); */
 
   const speak = () => {
     Speech.speak(description,{
@@ -32,7 +38,13 @@ export default function PokemonList({ item, color, image, description }) {
     outputRange: [1, 1.1, 1.2]
   });
 
+  const imageUri=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`
 
+
+
+/* if (!fontsLoaded) {
+  return (<Text>Haa</Text>);
+} else { */
     return (
       <TouchableOpacity
       activeOpacity={0.9}
@@ -68,7 +80,7 @@ export default function PokemonList({ item, color, image, description }) {
             {id.toString().length==2 ? '0' : ''}
             {id}
           </Text>
-          <Image source={{uri:image}} style={styles.image} resizeMode='cover'/>
+          <Image source={{uri:imageUri}} style={styles.image} resizeMode='contain'/>
           <View style={[styles.nameContainer, {backgroundColor:`${color}`},{backgroundColor:(`${color}`=='white'||`${color}`=='yellow') ?'orange':`${color}`}]}>
             <Text style={styles.name}> {name} </Text>
           </View>
@@ -76,6 +88,7 @@ export default function PokemonList({ item, color, image, description }) {
       </TouchableOpacity>     
     )
 }
+// }
 
 const {height, width} = Dimensions.get('window');
 
@@ -89,15 +102,17 @@ const styles = StyleSheet.create({
       backgroundColor: 'white',
       borderWidth:1.5,
       elevation:10,
+      margin:3,
     },  
     image: {
-      // backgroundColor:'lightgreen',
-      flex:3.5,
+      backgroundColor:'lightgreen',
+      flex:3,
     },
     digits: {
       fontSize:12,
-      height:'20%',
-      padding: 6,
+      flex:0.6,
+      paddingRight: 10,
+      paddingTop: 1,
       textAlign:'right',
       textAlignVertical:'bottom',
     },
@@ -105,10 +120,8 @@ const styles = StyleSheet.create({
       textTransform: 'capitalize',
       fontSize: 16,
       color:'white',
-      textShadowColor: '#000000',
-      textShadowOffset: {width: -1, height: 1},
-      textShadowRadius: 10,
       textAlign:'center',
+      fontFamily:'PressStart2P_400Regular'
       
     },
     nameContainer: {

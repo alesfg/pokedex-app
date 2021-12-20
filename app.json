@@ -4,7 +4,7 @@
     "slug": "pokedex-alex-flores",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/pokedex.png",
+    "icon": "./assets/pokeball.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -21,14 +21,14 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/pokeball.png",
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.alexflores.pokedex",
       "versionCode": 1
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/pokeball.png"
     }
   }
 }
