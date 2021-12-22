@@ -1,9 +1,22 @@
 import React, {useState, useEffect} from 'react';
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Dimensions, Image, FlatList } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Dimensions, Image, FlatList,VirtualizedList } from 'react-native';
 
-
+import Home from './components/Home'
 import PokemonList from './components/PokemonList';
-import pokeball from './assets/pokeball.png'
+import PokemonDetails from './components/PokemonDetails';
+// import pokeball from './assets/pokeball.png'
+
+import Constants from 'expo-constants';
+const statusBarHeight = Constants.statusBarHeight
+
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import PokemonDetails2 from './components/PokemonDetails';
+
+
+const Stack = createNativeStackNavigator();
+
+
 
 
 
@@ -13,16 +26,26 @@ export default function App() {
    
 
   const[allPokemons, setAllPokemons] = useState([])
-  // const [loadMore, setLoadMore] = useState('https://pokeapi.co/api/v2/pokemon?limit=21')
-  const [loadMore, setLoadMore] = useState('https://pokeapi.co/api/v2/pokemon?limit=121')
+  const [loadMore, setLoadMore] = useState('https://pokeapi.co/api/v2/pokemon?limit=41')
 
-  const[allPokemonsDetails, setAllPokemonsDetails] = useState([])
-  // const [loadMoreDetails, setLoadMoreDetails] = useState('https://pokeapi.co/api/v2/pokemon-species/?limit=21')
-  const [loadMoreDetails, setLoadMoreDetails] = useState('https://pokeapi.co/api/v2/pokemon-species/?limit=121')
+  // const[allPokemonsDetails, setAllPokemonsDetails] = useState([])
+  const [loadMoreDetails, setLoadMoreDetails] = useState('https://pokeapi.co/api/v2/pokemon-species/?limit=41')
 
  const getAllPokemons = async () => {
-   const res = await fetch(loadMore)
-   const data = await res.json()
+  const res = await fetch(loadMore)
+  const data = await res.json()
+
+  setLoadMore(data.next)
+
+  function createPokemonObject(results)  {
+    results.forEach( async pokemon => {
+       const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.name}`)
+       const data =  await res.json()
+       setAllPokemons( currentList => [...currentList, data].sort((a, b) => a.id - b.id))
+     })
+   }
+   createPokemonObject(data.results)
+
 
    const resDetails = await fetch(loadMoreDetails)
    const dataDetails = await resDetails.json()
@@ -36,103 +59,27 @@ export default function App() {
   }
   createPokemonDetails(dataDetails.results)
 
-
-   setLoadMore(data.next)
-
-   function createPokemonObject(results)  {
-     results.forEach( async pokemon => {
-       const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.name}`)
-       const data =  await res.json()
-       setAllPokemons( currentList => [...currentList, data].sort((a, b) => a.id - b.id))
-     })
-   }
-   createPokemonObject(data.results)
  }
 
-useEffect(() => {
+//  getAllPokemons()
+ useEffect(() => {
  getAllPokemons()
 }, [])
 
+const getItemCount = (data) => 50;
+const getItem = (data, index) => ({
+  id: Math.random().toString(12).substring(0),
+  title: `Item ${index+1}`
+});
 
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>Pokedex Alex</Text>
-          <Image
-          source={pokeball}
-          style={styles.icon}
-          />
-        </View>
-          
-        <View style={{width:'100%'}}>
-
-          <FlatList
-            style={styles.list,{backgroundColor:"lightblue"}}
-            data={allPokemons}
-            keyExtractor={ (item) => item.id  }
-            renderItem={({item, index}) =>
-              <SafeAreaView>
-                <PokemonList 
-                    item = { item }
-                    color={allPokemonsDetails[index].color.name}
-                    description={allPokemonsDetails[index].flavor_text_entries.find(e => e.language.name=="es").flavor_text}
-                />
-              </SafeAreaView>
-            }
-            ListHeaderComponent={ () => <Text style={{fontWeight:'bold',fontSize:18,margin:10}}>Toca en un pokemon para que la Pokédex te diga su descripción!</Text> }
-            numColumns={ 3 }
-          />
-        
-        </View>
-            <TouchableOpacity onPress={() => getAllPokemons()}>
-              <View style={styles.loadMore}>
-                <Text style={{textAlign:'center', textAlignVertical:'top',fontSize:15, paddingBottom:10}}>Ver más</Text>
-              </View>
-            </TouchableOpacity>
-      </SafeAreaView>
+      <NavigationContainer>
+        <Stack.Navigator>
+        <Stack.Screen component={Home} name='Home' />
+        <Stack.Screen component={PokemonDetails} name='PokemonDetails' />
+        </Stack.Navigator>
+      </NavigationContainer>
     );
   }         
 
 const {height, width} = Dimensions.get('window');
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#F7F7F7',
-    // paddingTop:30,
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  titleContainer: {
-    backgroundColor:'black',
-    width:width,
-    flexDirection:'row',
-    justifyContent:'space-evenly',
-    // height:
-  },
-  list: {
-    width:'100%',
-    margin:3,
-    flex:1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    justifyContent:'space-evenly'
-  },
-  icon:{
-    width:50,
-    height:50,
-  },
-  title: {
-    color:'#ffffff',
-    padding:10,
-    textAlignVertical:'center'
-  },
-  loadMore: {
-    height:height/12,
-    backgroundColor:'green'
-  }
-  
-});
-
-

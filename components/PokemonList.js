@@ -3,23 +3,26 @@ import * as React from 'react'
 import { StyleSheet, View, Text, Image, Dimensions, TouchableOpacity, Animated, Easing } from 'react-native';
 
 import * as Speech from 'expo-speech';
-/* import AppLoading from 'expo-app-loading';
-import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p'; */
+
+/* import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+const Stack = createNativeStackNavigator() */
 
 
-export default function PokemonList({ item, color, description }) {
+
+export default function PokemonList({ item, color, description, navigation }) {
  
   const { id, name } = item
 
- /*  let [fontsLoaded] = useFonts({
-    PressStart2P_400Regular,
-  }); */
+
 
   const speak = () => {
     Speech.speak(description,{
-      rate:1.1,
+      voice:"es-es-x-eed-network", //masculino agradable menos robo ,ESTE!
+      rate:1,
       language:'es-ES',
-      pitch:1,
+      pitch:1
       // voice:"es-us-x-esc-network"   latino
       // voice:"es-es-x-eee-local"
       // voice:"es-es-x-eef-local"  //masculino
@@ -27,7 +30,6 @@ export default function PokemonList({ item, color, description }) {
       // voice: "es-es-x-eea-local" //femenino robo
       // voice:"es-es-x-eed-local" //masculino robo
       // voice:"es-ES-language" //fem
-      voice:"es-es-x-eed-network" //masculino agradable menos robo ,ESTE!
       // voice:"es-es-x-eec-local"
     });
   };
@@ -40,15 +42,11 @@ export default function PokemonList({ item, color, description }) {
 
   const imageUri=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`
 
-
-
-/* if (!fontsLoaded) {
-  return (<Text>Haa</Text>);
-} else { */
     return (
       <TouchableOpacity
       activeOpacity={0.9}
-      onPress={speak}
+      // onPress={speak}
+      onPress={() => navigation.navigate("PokemonDetails")}
 
    
       onPressIn={() => {
@@ -105,7 +103,7 @@ const styles = StyleSheet.create({
       margin:3,
     },  
     image: {
-      backgroundColor:'lightgreen',
+      // backgroundColor:'lightgreen',
       flex:3,
     },
     digits: {
@@ -121,7 +119,6 @@ const styles = StyleSheet.create({
       fontSize: 16,
       color:'white',
       textAlign:'center',
-      fontFamily:'PressStart2P_400Regular'
       
     },
     nameContainer: {
