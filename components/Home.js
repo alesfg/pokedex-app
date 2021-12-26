@@ -5,10 +5,11 @@ import PokemonList from './PokemonList';
 
 
 export default function App({navigation}) {
-   
+  console.log("App")
+  const url = 'https://pokeapi.co/api/v2/pokemon?limit=60'
 
   const[allPokemons, setAllPokemons] = useState([])
-  const [loadMore, setLoadMore] = useState('https://pokeapi.co/api/v2/pokemon?limit=60')
+  const [loadMore, setLoadMore] = useState( url )
 
 
   const [error, setError] = useState(null)
@@ -63,13 +64,11 @@ export default function App({navigation}) {
               <PokemonList 
                 item = { item }
                 navigation={ navigation }
-                // description={allPokemonsDetails[index].flavor_text_entries.find(e => e.language.name=="es").flavor_text}
               />
             </View>
           }
         />
-      
-          <TouchableOpacity onPress={() => getAllPokemons()}>
+          <TouchableOpacity onPress={getAllPokemons}>
             <View style={styles.loadMore}>
               <Text style={{textAlign:'center', textAlignVertical:'top',fontSize:15, paddingBottom:10}}>Ver más</Text>
             </View>

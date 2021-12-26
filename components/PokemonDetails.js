@@ -16,15 +16,18 @@ import * as Speech from 'expo-speech';
 const PokemonDetails = ({ route }) => {
 
   const { item, type } = route.params
-  // console.log("animo!")
+  console.log("DEtalles!")
   const { id, name } = item
   const imageUri=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`
+  const urlDetails = `https://pokeapi.co/api/v2/pokemon-species/${id}`
+  const types = item.types.map(e => e.type.name)
+
   const [genus, setGenus] = useState(null)
   const [flavor, setFlavor] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
-  const types = item.types.map(e => e.type.name)
+  
   const getPokemonDetails = async () => {
-    const res = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`)
+    const res = await fetch( urlDetails )
     const data = await res.json()
     setGenus(data.genera.find(data => data.language.name==='es').genus)
     setFlavor(data.flavor_text_entries.find(data => data.language.name==='es').flavor_text)
@@ -34,6 +37,7 @@ const PokemonDetails = ({ route }) => {
   useEffect(async() => {
   await getPokemonDetails()
   speak()
+  setIsLoading(false)
 
 }, [])
 

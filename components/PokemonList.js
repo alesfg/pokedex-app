@@ -7,6 +7,7 @@ import { colors } from '../assets/colors'
 import pokeball from '../assets/pokedex.png'
 
 export default function PokemonList({ item, navigation }) {
+  console.log("pokemonLISt")
  
   const { id, name } = item
   const  type = item.types[0].type.name
