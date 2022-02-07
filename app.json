@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "Pokédex con Voz",
-    "slug": "pokedex-alex-flores",
+    "name": "catstronauts",
+    "slug": "catstronauts",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/pokeball.png",
+    "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -21,14 +21,12 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/pokeball.png",
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      },
-      "package": "com.alexflores.pokedex",
-      "versionCode": 1
+      }
     },
     "web": {
-      "favicon": "./assets/pokeball.png"
+      "favicon": "./assets/favicon.png"
     }
   }
 }
