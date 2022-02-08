@@ -10,12 +10,10 @@ import { translateType } from '../assets/translate'
 import * as Speech from 'expo-speech';
 
 export const DETALLES = gql`
-query samplePokequery {
-  pokemon_v2_pokemonspecies(limit:151) {
-    pokemon_v2_pokemonspecies {
-      pokemon_v2_pokemonspeciesflavortexts(where: {language_id: {_eq: 7}}) {
-        flavor_text
-      }
+query PokeDetails($_eq: Int! = 10) {
+  pokemon_v2_pokemonspecies(where: {id: {_eq: $_eq}}) {
+    pokemon_v2_pokemonspeciesflavortexts(limit: 1, where: {language_id: {_eq: 7}}) {
+      flavor_text
     }
   }
 }
@@ -23,26 +21,17 @@ query samplePokequery {
 
 
 const PokemonDetails = ({ route }) => {
-  const { loading, error, data } = useQuery(DETALLES);
-if(!loading){
-console.log(data.pokemon_v2_pokemonspecies)
-}
+  
   const { item, type } = route.params
+  console.log(item.id)
   const { id, name } = item
+  const { loading, error, data } = useQuery(DETALLES, {
+    variables:{id}
+  });
+  console.log(data);
   const imageUri=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`
-  const urlDetails = `https://pokeapi.co/api/v2/pokemon-species/${id}`
   const types = item.pokemon_v2_pokemontypes.map(e => e.pokemon_v2_type.name)
 
-  const [genus, setGenus] = useState(null)
-  const [flavor, setFlavor] = useState(null)
-  const [isLoading, setIsLoading] = useState(true)
- /*  const getPokemonDetails = async () => {
-    const res = await fetch( urlDetails )
-    const data = await res.json()
-    setGenus(data.genera.find(data => data.language.name==='es').genus)
-    setFlavor(data.flavor_text_entries.find(data => data.language.name==='es').flavor_text)
-    setIsLoading(false)
-  } */
  /*  useEffect(async() => {
   await getPokemonDetails()
   speak()
@@ -87,10 +76,9 @@ console.log(data.pokemon_v2_pokemonspecies)
                 {types[1] && <Text style={[styles.type,{backgroundColor:backgroundColors[types[1]]}]}> {translateType(types[1])} </Text>}
               </View>
             </View>
-            {isLoading ?? <Text>Cargando...</Text>}
-            <Text style={{color:backgroundColors[type],fontWeight:'bold',fontSize:20,padding:20}}>{genus}</Text>
+            <Text style={{color:backgroundColors[type],fontWeight:'bold',fontSize:20,padding:20}}>El genus</Text>
             {loading? <Text>Descripción</Text> :
-            <Text style={{fontStyle:'italic',fontSize:14}} selectable={true} selectionColor={'gray'}> { flavor } </Text>
+            <Text style={{fontStyle:'italic',fontSize:14}} selectable={true} selectionColor={'gray'}> El flavor  </Text>
             }
           </View>
         </View>

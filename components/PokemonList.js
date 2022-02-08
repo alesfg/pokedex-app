@@ -7,38 +7,38 @@ import { colors } from '../assets/colors'
 
 export default function PokemonList({ item, navigation }) {
   const { id, name } = item
-  const  type = item.pokemon_v2_pokemontypes[0].pokemon_v2_type.name
+  const type = item.pokemon_v2_pokemontypes[0].pokemon_v2_type.name
 
-  const getImage = async() => {
+  const getImage = async () => {
     setImageUri(`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`)
   }
 
   const [imageUri, setImageUri] = useState(null)
   const [isLoading, setisLoading] = useState(true)
 
-  useEffect(async() => {
+  useEffect(async () => {
     getImage()
     setisLoading(false)
   }, [])
 
   return (
     <TouchableOpacity
-      activeOpacity={0.9}
-    onPress={() => navigation.navigate("Pokemon Info", {
-      item : item,
-      type : type,
-    })}
+
+      onPress={() => navigation.navigate("Pokemon Info", {
+        item: item,
+        type: type,
+      })}
     >
 
-      <View style={[styles.card,{borderColor:colors[type]}]}>
-          <Text style={[styles.digits,{color:colors[type]}]}>
+      <View style={[styles.card, { borderColor: colors[type] }]}>
+        <Text style={[styles.digits, { color: colors[type] }]}>
           #
           {id.toString().length == 1 ? '00' : ''}
           {id.toString().length == 2 ? '0' : ''}
           {id}
         </Text>
-        {!isLoading && <Image source={{uri:imageUri}} style={styles.image} resizeMode='contain'/>}
-        <View style={[styles.nameContainer,{backgroundColor:colors[type]}]}>
+        {!isLoading && <Image source={{ uri: imageUri }} style={styles.image} resizeMode='contain' />}
+        <View style={[styles.nameContainer, { backgroundColor: colors[type] }]}>
           <Text style={styles.name}> {name.substring(0, 3) === "deo" ? name.substring(0, name.indexOf('-')) : name} </Text>
         </View>
       </View>
