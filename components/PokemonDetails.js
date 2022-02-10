@@ -9,11 +9,24 @@ import { translateType } from '../assets/translate'
 
 import * as Speech from 'expo-speech';
 
-export const DETALLES = gql`
-query PokeDetails($_eq: Int) {
+
+export const GET_DETALLES = gql`
+query getDetalles($_eq: Int) {
   pokemon_v2_pokemonspecies(where: {id: {_eq: $_eq}}) {
-    pokemon_v2_pokemonspeciesflavortexts(limit: 1, where: {language_id: {_eq: 7}}) {
+    pokemon_v2_pokemonspeciesflavortexts(where: {language_id: {_eq: 7}}, limit: 1) {
       flavor_text
+    }
+    pokemon_v2_pokemonhabitat {
+      name
+    }
+    pokemon_v2_pokemons {
+      weight
+    }
+    pokemon_v2_pokemonshape {
+      name
+    }
+    pokemon_v2_pokemonspeciesnames(where: {language_id: {_eq: 7}}) {
+      genus
     }
   }
 }
@@ -22,25 +35,30 @@ query PokeDetails($_eq: Int) {
 
 const PokemonDetails = ({ route }) => {
 
-  const { item, type } = route.params;
-  const { id, name } = item;
-  console.log(id)
-  const { loading, error, data, variables } = useQuery(DETALLES, {
-    variables:  { "_eq":id } ,
+  const { item, type } = route.params
+  const { id, name } = item
+
+  const { loading, error, data } = useQuery(GET_DETALLES, {
+    variables: { "_eq": id },
   });
-  console.log(variables);
-  console.log(data);
+  
+  // const flavor = data.pokemon_v2_pokemonspecies[0].pokemon_v2_pokemonspeciesflavortexts[0].flavor_text;
+  // const genus =  data.pokemon_v2_pokemonspecies[0].pokemon_v2_pokemonspeciesnames[0].genus;
+/*   const shape = data.pokemon_v2_pokemonspecies[0].pokemon_v2_pokemonshape.name;
+  const weight = data.pokemon_v2_pokemonspecies[0].pokemon_v2_pokemons[0].weight;
+  const habitat = data.pokemon_v2_pokemonspecies[0].pokemon_v2_pokemonhabitat.name; */
+  
+
+  console.log(data)
+  // error ?? console.log(error)
+
   const imageUri = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`
+  // const urlDetails = `https://pokeapi.co/api/v2/pokemon-species/${id}`
   const types = item.pokemon_v2_pokemontypes.map(e => e.pokemon_v2_type.name)
 
-  /*  useEffect(async() => {
-   await getPokemonDetails()
-   speak()
- 
- }, []) */
 
   const speak = () => {
-    Speech.speak(name + "." + genus + "." + flavor, {
+    Speech.speak(name + "." + genus + ".", {
       rate: 1.1,
       language: 'es-ES',
       pitch: 1,
@@ -77,14 +95,19 @@ const PokemonDetails = ({ route }) => {
             {types[1] && <Text style={[styles.type, { backgroundColor: backgroundColors[types[1]] }]}> {translateType(types[1])} </Text>}
           </View>
         </View>
-        <Text style={{ color: backgroundColors[type], fontWeight: 'bold', fontSize: 20, padding: 20 }}>El genus</Text>
-        {loading ? <Text>Descripción</Text> :
+        {loading ? <Text>Cargando...</Text> :
+        <Text style={{ color: backgroundColors[type], fontWeight: 'bold', fontSize: 20, padding: 20 }}>
+           {data.pokemon_v2_pokemonspecies[0].pokemon_v2_pokemonspeciesnames[0].genus}
+           </Text>
+        }
+        {loading ? <Text>POKEMON</Text> :
           <Text style={{ fontStyle: 'italic', fontSize: 14 }} selectable={true} selectionColor={'gray'}>
-            {/* { data.pokemon_v2_pokemonspecies[0].pokemon_v2_pokemonspeciesflavortexts[0].flavor_text } :D   */}
-            shit
+            {data.pokemon_v2_pokemonspecies[0].pokemon_v2_pokemonspeciesflavortexts[0].flavor_text}
           </Text>
         }
+
       </View>
+
     </View>
   )
 }
