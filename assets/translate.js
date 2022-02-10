@@ -16,7 +16,8 @@ export const translateType = (type) => {
       dragon : "dragón",
       dark : "oscuridad",
       ghost : "fantasma",
-      steel : "acero"
+      steel : "acero",
+      normal : "normal"
     }
     return  tipos[type];
 }
