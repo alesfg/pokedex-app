@@ -42,14 +42,13 @@ const PokemonDetails = ({ route }) => {
     variables: { "_eq": id },
   });
   
-  // const flavor = data.pokemon_v2_pokemonspecies[0].pokemon_v2_pokemonspeciesflavortexts[0].flavor_text;
+  // 
   // const genus =  data.pokemon_v2_pokemonspecies[0].pokemon_v2_pokemonspeciesnames[0].genus;
 /*   const shape = data.pokemon_v2_pokemonspecies[0].pokemon_v2_pokemonshape.name;
   const weight = data.pokemon_v2_pokemonspecies[0].pokemon_v2_pokemons[0].weight;
   const habitat = data.pokemon_v2_pokemonspecies[0].pokemon_v2_pokemonhabitat.name; */
   
 
-  console.log(data)
   // error ?? console.log(error)
 
   const imageUri = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`
@@ -58,7 +57,8 @@ const PokemonDetails = ({ route }) => {
 
 
   const speak = () => {
-    Speech.speak(name + "." + genus + ".", {
+    Speech.speak(name + "." + data.pokemon_v2_pokemonspecies[0].pokemon_v2_pokemonspeciesnames[0].genus + "."+
+    data.pokemon_v2_pokemonspecies[0].pokemon_v2_pokemonspeciesflavortexts[0].flavor_text, {
       rate: 1.1,
       language: 'es-ES',
       pitch: 1,
@@ -73,10 +73,14 @@ const PokemonDetails = ({ route }) => {
       // voice:"es-es-x-eec-local" //fem robo
     });
   };
+  if(!loading){
+    speak();
+  }
 
   return (
+    //{ backgroundColor: backgroundColors[type] }
     <View style={[styles.screen], { backgroundColor: backgroundColors[type] }}>
-      <View style={{ opacity: 0.15.toExponential, paddingTop: 20 }}>
+      <View style={{ opacity: 0.15, paddingTop: 20 }}>
         <ImageBackground source={pokeball_bg} style={{
           width: 200, height: 160, alignSelf: 'flex-end'
         }}
