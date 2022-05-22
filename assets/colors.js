@@ -40,4 +40,32 @@ const colors= {
     water: '#58ABF6',
   };
 
-  export { colors, backgroundColors };
+  const emojis= {
+    grass: '🍀',
+    water: '💧',
+    fire: '🔥',
+    rock: '😎',
+    ghost: '👻',
+    steel: '🗡',
+    normal: '😊',
+    fighting: '💪',
+    flying: '🐦',
+    poison: '🐍',
+    ground: '🌋',
+    psychic: '🧙‍♂️',
+    bug: '🐛',
+    ice: '🥶',
+    electric: '💡',
+    fairy: '🧚‍♀️',
+    dragon: '🐉',
+    dark: '🌑',
+  };
+
+  const stats= {
+    hp: '#74CB48',
+    attack: '#F57D31',
+    defense: '#4C91B2',
+    speed: '#F2CB55'
+  };
+
+  export { colors, backgroundColors, emojis, stats };

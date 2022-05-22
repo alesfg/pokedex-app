@@ -18,10 +18,15 @@ export default function App() {
   return (
     <ApolloProvider client={client}>
       <NavigationContainer>
-          <Stack.Navigator initialRouteName='Home'>
-            <Stack.Screen component={Home} name='Pokedex Alex' />
+          <Stack.Navigator
+           initialRouteName='Home'
+           screenOptions={{
+            headerShown:false
+          }}>
+            <Stack.Screen component={Home} name='Bear Pokedex' />
             <Stack.Screen component={PokemonDetails} name='Pokemon Info'
-              options={({ route }) => ({ title: route.params.item.name.charAt(0).toUpperCase()+route.params.item.name.slice(1) })}
+              // options={({ route }) =>{}}
+              //  ({ title: route.params.item.name.charAt(0).toUpperCase()+route.params.item.name.slice(1)})}
            />
           </Stack.Navigator>
       </NavigationContainer>

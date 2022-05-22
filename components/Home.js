@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, FlatList } from 'react-native';
+import { StyleSheet, Text, Image, View, FlatList, TextInput } from 'react-native';
 
 import { useQuery, gql } from '@apollo/client';
+import usePokemonSearch from './usePokemonSearch';
+import pokegif from '../assets/image11.gif'
 
 
 import PokemonList from './PokemonList';
 
 export const POKEMON = gql`
-  query samplePokeAPIquery {
-  pokemon_v2_pokemon(limit: 151) {
+  query samplePokeAPIquery ($offset: Int) {
+  pokemon_v2_pokemon(limit: 15,offset: $offset){
     name
     id
     pokemon_v2_pokemontypes {
@@ -20,38 +22,72 @@ export const POKEMON = gql`
 }
 `
 
+
 export default function App({ navigation }) {
-  console.log("App")
-  const { loading, error, data } = useQuery(POKEMON);
-  // console.log(data)
+  
+  const [offst, setOffset] = useState(0)
+  const { loading, error, data } = useQuery(POKEMON, {variables: { "offset": offst }});
+  const [text, onChangeText] = useState('pi')
+  const [pokemons, setPokemons] = useState([]);
+  const loadMore = () => {
+    setOffset(offst+15)
+  }
+
+  useEffect( () => {
+    if(data && Object.keys(data)?.length>0){
+      setPokemons([...pokemons,...data.pokemon_v2_pokemon])
+    }
+     
+  }, [data])
+
+  console.log("Home")
+  
+  const renderData = ({ item, index }) => {
+    return (
+      <PokemonList 
+      item = { item }
+      navigation={ navigation }
+      />
+    )
+  }
 
   return (
 
     <View style={styles.container}>
-      {loading ? <Text>Cargando</Text>
+      {/* <TextInput
+        value={text}
+        onChangeText={onChangeText}
+        placeholder='Busca un Pokémon'
+        maxLength={12}
+        /> */}
+      {loading && pokemons?.length===0 ? 
+        <View>
+          <Image
+          source={pokegif}
+          style={{
+            height: 179,
+            width: 320,
+            marginTop:100
+          }}
+          />
+        </View>
         :
         <FlatList
-          data={data.pokemon_v2_pokemon}
+          data={pokemons}
           keyExtractor={(pokemon) => pokemon.id}
-          ListHeaderComponent={() => <Text style={{ fontWeight: 'bold', fontSize: 18, margin: 30 }}>Toca en un pokemon de la Pokédex y mira su información!</Text>}
+          ListHeaderComponent={() => <Text style={{ fontWeight: 'bold', fontSize: 28, margin: 20,paddingTop:30 }}>Bear 🐻 Pokedex</Text>}
           numColumns={3}
           contentContainerStyle={{ alignItems: 'center' }}
-          renderItem={({ item, index }) =>
-            <View>
-              {/* <Text>{item.name}</Text> */}
-              <PokemonList 
-              item = { item }
-              navigation={ navigation }
-              />
-            </View>
-          }
+          onEndReachedThreshold={0.1}
+          onEndReached={()=>{
+            loadMore()
+          }}
+          renderItem={renderData}
         />
       }
-      {/* <QueryResult error={error} loading={loading} data={data}>
-          {data?.tracksForHome?.map((track, index) => (
-              <TrackCard key={track.id} track={track} />
-          ))}
-      </QueryResult> */}
+    {(loading ) ?? <Text>Cargando</Text>}
+
+     
     </View>
   );
 }

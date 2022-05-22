@@ -3,20 +3,19 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Image, Dimensions, TouchableOpacity } from 'react-native';
 import { colors } from '../assets/colors'
 
-// import pokeball from '../assets/pokedex.png'
-
 export default function PokemonList({ item, navigation }) {
   const { id, name } = item
   const type = item.pokemon_v2_pokemontypes[0].pokemon_v2_type.name
 
-  const getImage = async () => {
+  // console.log(item)
+  const getImage = () => {
     setImageUri(`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`)
   }
 
   const [imageUri, setImageUri] = useState(null)
   const [isLoading, setisLoading] = useState(true)
 
-  useEffect(async () => {
+  useEffect(() => {
     getImage()
     setisLoading(false)
   }, [])
@@ -25,9 +24,10 @@ export default function PokemonList({ item, navigation }) {
     <TouchableOpacity
 
       onPress={() => navigation.navigate("Pokemon Info", {
-        item: item,
-        type: type,
+        type:type,
+        id: id
       })}
+      activeOpacity={0.9}
     >
 
       <View style={[styles.card, { borderColor: colors[type] }]}>
@@ -39,7 +39,7 @@ export default function PokemonList({ item, navigation }) {
         </Text>
         {!isLoading && <Image source={{ uri: imageUri }} style={styles.image} resizeMode='contain' />}
         <View style={[styles.nameContainer, { backgroundColor: colors[type] }]}>
-          <Text style={styles.name}> {name.substring(0, 3) === "deo" ? name.substring(0, name.indexOf('-')) : name} </Text>
+          <Text style={[styles.name]}> {name.substring(0, 3) === "deo" ? name.substring(0, name.indexOf('-')) : name} </Text>
         </View>
       </View>
     </TouchableOpacity>
